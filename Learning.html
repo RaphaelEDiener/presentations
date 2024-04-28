@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+
+    <title></title>
+    <link rel="stylesheet" href="dist/reveal.css" />
+    <link rel="stylesheet" href="dist/theme/black.css" id="theme" />
+    <link rel="stylesheet" href="plugin/highlight/zenburn.css" />
+	<link rel="stylesheet" href="css/layout.css" />
+	<link rel="stylesheet" href="plugin/customcontrols/style.css">
+	<link rel="stylesheet" href="plugin/chalkboard/style.css">
+
+
+    <link rel="stylesheet" href="css/mermaid.css" />
+
+    <script defer src="dist/fontawesome/all.min.js"></script>
+
+	<script type="text/javascript">
+		var forgetPop = true;
+		function onPopState(event) {
+			if(forgetPop){
+				forgetPop = false;
+			} else {
+				parent.postMessage(event.target.location.href, "app://obsidian.md");
+			}
+        }
+		window.onpopstate = onPopState;
+		window.onmessage = event => {
+			if(event.data == "reload"){
+				window.document.location.reload();
+			}
+			forgetPop = true;
+		}
+
+		function fitElements(){
+			const itemsToFit = document.getElementsByClassName('fitText');
+			for (const item in itemsToFit) {
+				if (Object.hasOwnProperty.call(itemsToFit, item)) {
+					var element = itemsToFit[item];
+					fitElement(element,1, 1000);
+					element.classList.remove('fitText');
+				}
+			}
+		}
+
+		function fitElement(element, start, end){
+
+			let size = (end + start) / 2;
+			element.style.fontSize = `${size}px`;
+
+			if(Math.abs(start - end) < 1){
+				while(element.scrollHeight > element.offsetHeight){
+					size--;
+					element.style.fontSize = `${size}px`;
+				}
+				return;
+			}
+
+			if(element.scrollHeight > element.offsetHeight){
+				fitElement(element, start, size);
+			} else {
+				fitElement(element, size, end);
+			}		
+		}
+
+
+		document.onreadystatechange = () => {
+			fitElements();
+			if (document.readyState === 'complete') {
+				if (window.location.href.indexOf("?export") != -1){
+					parent.postMessage(event.target.location.href, "app://obsidian.md");
+				}
+				if (window.location.href.indexOf("print-pdf") != -1){
+					let stateCheck = setInterval(() => {
+						clearInterval(stateCheck);
+						window.print();
+					}, 250);
+				}
+			}
+	};
+
+
+        </script>
+  </head>
+  <body>
+    <div class="reveal">
+      <div class="slides"><section  data-markdown><script type="text/template"><!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 1200px; width: 1920px; min-height: 1200px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+# Real OOP
+
+Raphael Diener 29.04.24
+</div>
+
+<aside class="notes"><p>I originally wanted to talk to you about Object oriented programming.
+I had all the slides prepared with jokes and infographics and mnemonics, and stuff.
+But I was on a stroll in the woods, when I noticed the profound uselessness of the talk.</p>
+</aside></script></section><section  data-markdown><script type="text/template"><!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 1200px; width: 1920px; min-height: 1200px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+# ~~Real OOP~~
+
+*You can't learn anything from a 15 minute presentation*     
+Raphael Diener 29.04.24
+</div>
+
+<aside class="notes"><p>So I&#39;m doing none of that today.
+Instead I&#39;m gonna talk to you about why you can&#39;t learn anything from a 15 minute presentation,
+using a 15 minute presentation.</p>
+</aside></script></section><section  data-markdown><script type="text/template"><!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 1200px; width: 1920px; min-height: 1200px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+# Leaning
+</div>
+
+<aside class="notes"><p>Neurology tells us that we learn by building mental models in our head.
+There are a few underlying ways we might build mental models,
+but the most primitive and effective one is:
+Neurons that fire together, bind together.</p>
+<p>And this will most likely not be the case in a 15 minute presentation</p>
+</aside></script></section><section  data-markdown><script type="text/template"><!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 1200px; width: 1920px; min-height: 1200px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+<img src="MedRechtPrä/map-.jpg" alt="" style="object-fit: scale-down">
+
+[Photo from Dominika Roseclay](https://www.pexels.com/de-de/foto/person-die-beige-pullover-halt-karte-im-fahrzeug-halt-1252500/)
+</div>
+
+<aside class="notes"><p>Let&#39;s take the example of making a mental map.<br>The first day at UCB you were probably a bit disorientated.<br>You walked around until you found your lecture room.      </p>
+<p>The second time was faster and the path got strengthen.      </p>
+<p>Then after you have walked the path multiple times,<br>it is strongly physically wired inside your brain.      </p>
+<p>source:
+Every second talk at: <a href="https://www.youtube.com/@MITCBMM">https://www.youtube.com/@MITCBMM</a>
+If you are looking for one to start with, try those two:
+<a href="https://www.youtube.com/watch?v=pS4Q9tumaq0">Hippocampal memory, cognition, and the role of sleep (part 1)</a>
+<a href="https://www.youtube.com/watch?v=E1_io-Tt0qg">Hippocampal memory, cognition, and the role of sleep (part 2)</a></p>
+<p>Also:
+<a href="https://amzn.eu/d/8Y1kJVn">Jeff Hawkins - A Thousand Brains: A New Theory of Intelligence</a></p>
+</aside></script></section><section  data-markdown><script type="text/template"><!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 1200px; width: 1920px; min-height: 1200px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+# Repetition
+</div>
+
+<aside class="notes"><p><em>&quot;So repetition is required to strengthen connections between neurons.<br>We get it&quot;</em>      </p>
+<p>Yes, but this not something I can do.<br>If I were to constantly repeat myself, I&#39;d probably only get you bored and a bad grade too.      </p>
+<p>And if I don&#39;t you won&#39;t take anything away.      </p>
+<p>You won&#39;t be learning anything from a 15 minute presentation.</p>
+</aside></script></section><section  data-markdown><script type="text/template"><!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 1200px; width: 1920px; min-height: 1200px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+# Failure
+</div>
+
+<aside class="notes"><p>But ok, there is a second option.<br>one more powerful than the first one.<br>And that is failure.      </p>
+<p>Failing is the best thing that can happen in your learning.<br>Some prominent voices also argue that it&#39;s the only way you can ever learn anything.      </p>
+<p>Back in our internal map example:<br>If you took the wrong turn once,<br>you will remember that spot the next day with:<br>&quot;Oh, that&#39;s the spot I took the wrong turn&quot;.      </p>
+<p>The memory associated will be stronger and more salient.      </p>
+<p>But this is not something you can do inside a 15 minute presentation.      </p>
+<p>There is only one fail state for you and that is not listening.<br>And even if I bore you so much that you start sleeping,<br>this isn&#39;t a real fail state, is it?<br>The only thing you do during a presentation is listen.<br>And you&#39;ve mastered that skill hopefully in the Kindergarten.      </p>
+<p>You won&#39;t be learning something <em>new</em> inside a 15 minute presentation.      </p>
+<p>Source:</p>
+<p>Again, every psychologist I know would agree.
+So, I&#39;m citing <a href="https://wiki.healthygamer.gg/en/Learning">Dr.K.</a> 
+as well as the basis for the psychology lectures I had at Saarland University:</p>
+<ul>
+<li>Eysenck, M. &amp; Keane, M. T. (2020). Cognitive psychology. A student‘s handbook (7th ed.). London: Psychology Press. </li>
+<li>Buchner &amp; Brandt (2017). Gedächtniskonzeptionen und Wissensrepräsenationen. In J. Müsseler (Hrsg.), Allgemeine Psychologie, 3. Aufl.). Heidelberg: Spektrum. </li>
+<li>Wentura, D. &amp; Frings, C. (2013). Kognitive Psychologie. Wiesbaden: Springer VS.</li>
+</ul>
+</aside></script></section><section  data-markdown><script type="text/template"><!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 1200px; width: 1920px; min-height: 1200px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+<img src="MedRechtPrä/Pasted image 20240424154207.png" alt="" style="object-fit: cover">
+
+
+[studysmarter.de](https://website-cdn.studysmarter.de/2022/12/Bildschirm%C2%ADfoto-2022-12-02-um-11.14.53.png)
+</div>
+
+<aside class="notes"><p>And we can see how integral failure is to learning when examining Anki as a case study.</p>
+<p>You make flashcards to help you remember knowledge.
+Not even understanding.
+And yet, for effective memorization of knowledge, the cornerstone is not really repetition,
+but failure.
+Flashcards are made for you to fail.</p>
+<p>Hence the 4 buttons at the bottom of the screen describe how hard you&#39;ve failed.</p>
+<p>And we know that flashcards are the most effective way to gain knowledge,
+since it is used my medical students all around the globe for exactly this reason.</p>
+<p>So if even repetition pails in comparison to failing, it becomes even more obvious,
+that you won&#39;t learn something from a 15 minute presentation.</p>
+</aside></script></section><section  data-markdown><script type="text/template"><!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 1200px; width: 1920px; min-height: 1200px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+# Thanks for listening to my TED talk
+</div>
+
+<aside class="notes"><p>So, this was pretty much all I have to say on this matter.
+But since we have so much time left,
+how about we spend the rest of the time talking about the original topic.</p>
+</aside></script></section><section  data-markdown><script type="text/template"><!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 1200px; width: 1920px; min-height: 1200px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+# OOP
+</div>
+
+<aside class="notes"><p>Hands up. How many of you think Java is an object oriented language. 
+Cpp?
+,...</p>
+<p>Huh, that&#39;s curious.
+Those languages are class based, not object based.</p>
+<p>Don&#39;t you find it curious how you all said they were object oriented?</p>
+</aside></script></section><section  data-markdown><script type="text/template"><!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 1200px; width: 1920px; min-height: 1200px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+# Repetition legitimizes
+</div>
+
+<aside class="notes"><p>I&#39;d recon it has something to do with this. Doesn&#39;t it?</p>
+<p>You&#39;ve heard this factoid repeated so often, that you didn&#39;t even question it.</p>
+<p>So the question becomes not only, why you repeated that piece of misinformation,
+but why the people who told you that, also repeated that piece of misinformation them selfs.</p>
+</aside></script></section><section  data-markdown><script type="text/template"><!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 1200px; width: 1920px; min-height: 1200px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+<img src="MedRechtPrä/Pasted image 20240422004042.png" alt="" style="object-fit: scale-down">
+</div>
+
+<aside class="notes"><p>And the answer is, that you can&#39;t learn something from a 1 hour presentation.</p>
+<p>When OOP started to emerge in the 80s, 
+there were only a hand full of small talk programmers and a couple erlang programmers,
+who actually understood what object orientation meant.</p>
+</aside></script></section><section  data-markdown><script type="text/template"><!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 1200px; width: 1920px; min-height: 1200px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+<img src="MedRechtPrä/Pasted image 20240413214152.png" alt="" style="object-fit: scale-down">
+</div>
+
+<aside class="notes"><p>Then they went to a conference or gave seminars on that topic and as expected,
+people didn&#39;t learned anything from listening to them.</p>
+<p>And here I was foolishly thinking, that I could do better.
+Better than over 40 years of knowledge transmission did before me.</p>
+<p>You would have learned nothing from a 15 minute presentation.</p>
+</aside></script></section><section  data-markdown><script type="text/template"><!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 1200px; width: 1920px; min-height: 1200px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+# Japanese
+</div>
+
+<aside class="notes"><p>By this point you have surely realized, that I&#39;ve played a joke on you.
+This was all part of my presentation and I&#39;ve not run out of slides.</p>
+<p>But since we are already here, indulge me for a second talking about my study of the Japanese language.
+For the N4 test I learned a total of 1500 words.
+I knew them all for the exam.</p>
+<p>If you were to ask me now how many of those I&#39;d remember,
+I would be impressed with myself if I were able to remember one fifth.</p>
+<p>But if we talk about programming,
+I&#39;m pretty sure I could tell you about <strong>All</strong> of my failures.
+You could throw me into a new language I&#39;ve never seen before and I would be productive at the end of the same day.</p>
+<p>Why is that?</p>
+</aside></script></section><section  data-markdown><script type="text/template"><!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 1200px; width: 1920px; min-height: 1200px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+# Quality of Learning
+</div>
+
+<aside class="notes"><p>The answer is, that not all learning is created equally.
+I already mentioned it earlier, but learning through failure is considered better than learning through repetition.
+But why?</p>
+<p>The answer is that learning through failure builds understanding.
+Knowledge is the necessary precondition to understanding, but it is not sufficient.
+The only way to create understanding is the play with something and explore its limitations.</p>
+<p>You can&#39;t learn anything from a 15 minute presentation.</p>
+<p>TODO: insert something something paradigm -&gt; link to subjects @ school/uni</p>
+<p>Wait a minute.
+I&#39;m pretty sure, we all know a place were we spend a lot of time getting talked to a lot,
+under the pretense that we should be able to learn something.</p>
+</aside></script></section><section  data-markdown><script type="text/template"><!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 1200px; width: 1920px; min-height: 1200px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+# College
+</div>
+
+<aside class="notes"><p>But if we entertain the facts I mentioned previously seriously,
+then we can not help but end up with the realization,
+that teaching is one of the biggest obstruction to learning there is.</p>
+<p>That sheds a unconformable light on what you guys have been doing for the past few years,
+doesn&#39;t it?</p>
+<p>Because you will not learn something from a 1 and a half hour lecture.</p>
+<p>I mean, I&#39;ve learned a lot from conference talks, lectures and video recordings,
+but none of that from the first time listening.
+When I resonate with something or think there was something of meaning inside that piece of content,
+I read, listen, watch it again and again and again hoping that I can retain the knowledge for long enough,
+until I&#39;m able to understand it.</p>
+<p>But that&#39;s not something you can do in the lectures I&#39;m taking this semester, 
+because no lecturer records any of their lectures!</p>
+<p>And you will not be able to learn something by listening to their 1 and a half hour lecture for the first time.</p>
+</aside></script></section><section  data-markdown><script type="text/template"><!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 1200px; width: 1920px; min-height: 1200px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+<img src="MedRechtPrä/Pasted image 20240424160548.png" alt="" style="object-fit: scale-down">
+
+
+[Image Source: Wikipedia](https://upload.wikimedia.org/wikipedia/commons/thumb/0/04/ChatGPT_logo.svg/2048px-ChatGPT_logo.svg.png)
+
+<aside class="notes"><p>By now I&#39;ve hopefully established that repetition is the minimum 
+and the knowledge gained through it is ephemeral.
+It becomes obvious that this thing is the most destructive thing you could ever use as a student.
+As a student your job is to learn.</p>
+<p>Even if the teacher gives you tasks to fail at,
+if you repeatedly use an LLM to answer the questions,
+thinking, that the repetitive reading of the answers will make you learn,
+you are setting yourself up for failing not in school, but in life.</p>
+<p>You will learn nothing from reading an pre stated answer.</p>
+<p>&quot;<em>But its like a dictionary in better</em>&quot;.
+Yes, if you want your dictionaries to lie to your face with high confidence, that is.</p>
+</div></aside></script></section><section  data-markdown><script type="text/template"><!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 1200px; width: 1920px; min-height: 1200px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+<img src="MedRechtPrä/Pasted image 20240424160025.png" alt="" style="object-fit: cover">
+</div>
+
+<aside class="notes"><p>The <strong>only</strong> thing correct in the explanations given is the syntax example.
+Statement one and two are wrong.</p>
+<p>But why will ChatGPT vehemently defend the definition it has given you?</p>
+</aside></script></section><section  data-markdown><script type="text/template"><!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 1200px; width: 1920px; min-height: 1200px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+# Repetition
+</div>
+
+<aside class="notes"><p>But in the end it all comes down to this.
+Repetition.</p>
+<p>The sources it was trained on repeated that information multiple times,
+so it is sure, that it is correct.
+And the same way repetition of wrong facts propagates the myth that Java, C++ and C#
+are object oriented,
+the same way all LLMs will propagate wrong information about almost every topic.</p>
+<p>You will learn nothing by using a LLM.</p>
+</aside></script></section><section  data-markdown><script type="text/template"><!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 1200px; width: 1920px; min-height: 1200px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+# Be excellent
+</div>
+
+<aside class="notes"><p>I&#39;ve decided to use my opportunity as the first talk,
+to enable the message to get across.
+In the hopes that you remember what I said today every time, 
+you hear one of the other presentations that come after me.</p>
+<p>That if you find anything meaningful in the things that get presented here,
+that you then also take the time to download their transcription,
+and read it again and again until you are able to unterstand what they have been trying to say.</p>
+<p>You won&#39;t have learned something from this,
+but maybe, maybe, you will remember something from this 15 minute presentation.</p>
+</aside></script></section></div>
+    </div>
+
+    <script src="dist/reveal.js"></script>
+
+    <script src="plugin/markdown/markdown.js"></script>
+    <script src="plugin/highlight/highlight.js"></script>
+    <script src="plugin/zoom/zoom.js"></script>
+    <script src="plugin/notes/notes.js"></script>
+    <script src="plugin/math/math.js"></script>
+	<script src="plugin/mermaid/mermaid.js"></script>
+	<script src="plugin/chart/chart.min.js"></script>
+	<script src="plugin/chart/plugin.js"></script>
+	<script src="plugin/customcontrols/plugin.js"></script>
+	<script src="plugin/chalkboard/plugin.js"></script>
+
+    <script>
+      function extend() {
+        var target = {};
+        for (var i = 0; i < arguments.length; i++) {
+          var source = arguments[i];
+          for (var key in source) {
+            if (source.hasOwnProperty(key)) {
+              target[key] = source[key];
+            }
+          }
+        }
+        return target;
+      }
+
+	  function isLight(color) {
+		let hex = color.replace('#', '');
+
+		// convert #fff => #ffffff
+		if(hex.length == 3){
+			hex = `${hex[0]}${hex[0]}${hex[1]}${hex[1]}${hex[2]}${hex[2]}`;
+		}
+
+		const c_r = parseInt(hex.substr(0, 2), 16);
+		const c_g = parseInt(hex.substr(2, 2), 16);
+		const c_b = parseInt(hex.substr(4, 2), 16);
+		const brightness = ((c_r * 299) + (c_g * 587) + (c_b * 114)) / 1000;
+		return brightness > 155;
+	}
+
+	var bgColor = getComputedStyle(document.documentElement).getPropertyValue('--r-background-color').trim();
+	var isLight = isLight(bgColor);
+
+	if(isLight){
+		document.body.classList.add('has-light-background');
+	} else {
+		document.body.classList.add('has-dark-background');
+	}
+
+      // default options to init reveal.js
+      var defaultOptions = {
+        controls: true,
+        progress: true,
+        history: true,
+        center: true,
+        transition: 'default', // none/fade/slide/convex/concave/zoom
+        plugins: [
+          RevealMarkdown,
+          RevealHighlight,
+          RevealZoom,
+          RevealNotes,
+          RevealMath.MathJax3,
+		  RevealMermaid,
+		  RevealChart,
+		  RevealCustomControls,
+		  RevealChalkboard, 
+        ],
+
+
+    	allottedTime: 120 * 1000,
+
+		mathjax3: {
+			mathjax: 'plugin/math/mathjax/tex-mml-chtml.js',
+		},
+		markdown: {
+		  gfm: true,
+		  mangle: true,
+		  pedantic: false,
+		  smartLists: false,
+		  smartypants: false,
+		},
+
+		mermaid: {
+			theme: isLight ? 'default' : 'dark',
+		},
+
+		customcontrols: {
+			controls: [
+				{ icon: '<i class="fa fa-pen-square"></i>',
+				title: 'Toggle chalkboard (B)',
+				action: 'RevealChalkboard.toggleChalkboard();'
+				},
+				{ icon: '<i class="fa fa-pen"></i>',
+				title: 'Toggle notes canvas (C)',
+				action: 'RevealChalkboard.toggleNotesCanvas();'
+				},
+			]
+		},
+      };
+
+      // options from URL query string
+      var queryOptions = Reveal().getQueryHash() || {};
+
+      var options = extend(defaultOptions, {"width":1920,"height":1200,"margin":0,"controls":false,"progress":false,"slideNumber":false,"transition":"none","transitionSpeed":"fast"}, queryOptions);
+    </script>
+
+    <script>
+      Reveal.initialize(options);
+    </script>
+  </body>
+
+  <!-- created with Advanced Slides -->
+</html>
