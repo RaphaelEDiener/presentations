@@ -343,6 +343,15 @@ void move_player(Player* player) {
     player->x++;
 }
 
+void gravity_player(Player* player) {
+    player->y -= player->y > 0 ? 1 : 0;
+}
+void gravity_enemies(Enemy* enemies, size_t len) {
+    for (size_t i = 0; i < len; i++) {
+        enemies[i].y -= enemies[i].y > 0 ? 1 : 0;
+    }
+}
+
 ```
 
 note:
@@ -356,6 +365,8 @@ note:
 6. Debug - yes
 5. Execute - meh
 4. Modify - nope
+- ja, code kann so nicht laufen, 
+  aber er muss auf slides passen.
 
 ---
 
@@ -379,9 +390,16 @@ void move(EnemyDa enemies) {
         enemies.ptr[i].x--;
     }
 }
-
 void move_player(Player* player) {
     player->x++;
+}
+void gravity_player(Player* player) {
+    player->y -= player->y > 0 ? 1 : 0;
+}
+void gravity_enemies(EnemyDa enemies) {
+    for (size_t i = 0; i < enemies.count; i++) {
+        enemies.ptr[i].y -= enemies.ptr[i].y > 0 ? 1 : 0;
+    }
 }
 
 ```
@@ -397,17 +415,23 @@ typedef struct {
 } Entity;
 
 DEFINE_DA(Entity);
-EntityDa enemies = new_da(...);
-Entity player = {...};
+DEFINE_SLICE(Entity);
+EntityDa entities = new_da(...);
+EntitySlice enemies = new_da(...);
+Entity* player = {...};
 
-void move(EntityDa enemies) {
+void move_enemies(EntitySlice enemies) {
     for (size_t i = 0; i < enemies.count; i++) {
         enemies.ptr[i].x--;
     }
 }
-
 void move_player(Entity* player) {
     player->x++;
+}
+void gravity(EntityDa entities) {
+    for (size_t i = 0; i < entities.count; i++) {
+        entities.ptr[i].y -= entities.ptr[i].y > 0 ? 1 : 0;
+    }
 }
 
 ```
@@ -416,48 +440,179 @@ note:
 
 - better generelized
 - worse in flexibility
+  - players und enemies sind distinct - entwickeln sich unterschiedlich
 
 ---
 
 ```c
 enum EntityType {
-  LOW,
-  MEDIUM,
-  HIGH
+  PLAYER,
+  ENEMY
 };
 typedef struct {
     int x;
     int y;
+} EnemyData;
+typedef struct {
+    int x;
+    int y;
+} PlayerData;
+typedef struct {
+    EntityType type;
+    union {
+        EnemyData enemy_data;
+        PlayerData player_data;
+    }
 } Entity;
 
-typedef struct {
-    int x;
-    int y;
-} Enemy;
-typedef struct {
-    int x;
-    int y;
-} Player;
+DEFINE_SLICE(Entitiy);
+DEFINE_DA(Entitiy);
+EntityDa entities = new_da(...);
+EntitySlice enemies = new_da(...);
+Entity* player = {...};
 
-DEFINE_DA(Enemy);
-EnemyDa enemies = new_da(...);
-Player player = {...};
-
-void move(EnemyDa enemies) {
+void move_enemies(EntitySlice enemies) {
     for (size_t i = 0; i < enemies.count; i++) {
         enemies.ptr[i].x--;
     }
 }
-
-void move_player(Player* player) {
-    player.x++;
+void move_player(Entity* player) {
+    player->x++;
 }
+void gravity(EntityDa entities) {
+    for (size_t i = 0; i < entities.count; i++) {
+        entities.ptr[i].y -= entities.ptr[i].y > 0 ? 1 : 0;
+    }
+}
+
 
 ```
 
 note:
+- entities wie im ECS
+- genauso general wie vorher
+- umgefähr selbe performance
+- player/enemy genauso einfach änderbar wie davor
+- wenn spiel so strukturiert 
+  -> bereits bessere perfomance als 99% aller "indie" spiele (meiner erfahrung nach)
 
 ---
+
+# Class
+
+TODO: picture casey cycle measurement
+
+note:
+
+- klassen als struct mit virtual method table
+- signature-polymorphism benötigt deutlich mehr cycles um @ runtime aufgelöst zu werden
+  - plus vererbung, welche lookup braucht
+
+---
+
+TODO: image of Memory levels 
+
+note:
+
+- erklähren der mem hirachy
+- jeh mehr platz wir einnehmen -> mehr cache misses -> mehr verschwendete cycles.
+- performance ist nicht alles, wie sieht coupling aus?
+
+---
+
+# I don't need performance, PC's are fast and my game is small
+
+note:
+
+- BS argument
+  - case study: bloons td -> capped at lv 300 weil performance
+  - multiplayer: rollback code
+  - halbwegs gute physics colisions
+  - parickel
+  - Kikaninchen app - imput lag -> schwer zu spielen für target audience
+- nicht: hab ich performance problem -> wann habe ich performance probleme
+
+---
+
+TODO: diagram of game state + functions
+
+note:
+
+- case 1: coupling overload
+- bsp: gamestate struct
+- jede function mutiert den game-state
+- problem: game logic verteilt sich überall hin, weil es keine encapsulation gibt / klare grenzen
+
+---
+
+TODO: mach daraus class
+
+---
+
+TODO: interface mit der god-class diagram
+
+note:
+
+- interfaces als schneller und einfacher weg das problem zu lösen
+- bester schritt im refactoring
+- an keiner stelle mehr auf Klassen arbeiten, nurnoch auf interface
+
+---
+
+TODO: pull out classes and partially compose game state
+
+note:
+
+- der refactor ist für die logic unsichtbar, weil interfaces
+---
+
+TODO: inheritance 
+
+note:
+
+- beobachtung:
+  - gute inheritance folgt liskov und ist selten
+    - problem: wenn wir liskov folgen 
+      -> modular -> gut
+      & -> douplication -> bad
+  - inheritance ist ein baum
+    - problem: nicht alle spiele so modelierbar
+  - in diesem stil sind functionen "mutating"
+    - schwer object state zu testen oder zu conzeptualisieren
+- deshalb composition > inheritance
+  - modular und weniger douplication
+  - beziehungen modelierbar als gerichteter graph
+  - immutabile style -> einfach testbar and verständlich
+    - compiler sind schlau -> wenig performance impact
+
+---
+
+# OOP? 
+
+note:
+
+- nicht das kind mit dem badewasser wegschütten
+- was ist mit OOP nach Alan Kay?
+
+---
+
+TODO: postulates of small talk
+
+note:
+- erster blick = performance nightmare
+- zweiter blick, ein 1:1 model um systeme zu bauen
+
+---
+
+
+note:
+
+- wie sieht ein object in der einfachsten, low level impl aus?
+
+---
+
+
+
 
 
 
