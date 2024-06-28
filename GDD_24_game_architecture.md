@@ -531,6 +531,9 @@ note:
   - parickel
   - Kikaninchen app - imput lag -> schwer zu spielen für target audience
 - nicht: hab ich performance problem -> wann habe ich performance probleme
+- sind lehrer im raum? 
+  -> hab einen kurs belegt on 0 sekunden wurden mit performance oder testing verbacht.
+  - nicht verwunderlich, dass spiele so niedrige qualität haben, wenn so gelehrt wird.
 
 ---
 
