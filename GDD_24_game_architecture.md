@@ -222,7 +222,7 @@ note:
 
 ### Sind ***ECS*** ***Systeme***?
 
-| Entity Component Sysmtes | Entity Component System |
+| Entities Component Sysmtes | Entity Component System |
 |--------------------------|-------------------------|
 |                          |                         |
 
@@ -234,7 +234,7 @@ note:
 
 ### Sind ***ECS*** ***Systeme***?
 
-| Entity Component Sysmtes | Entity Component System |
+| Entities Component Sysmtes | Entity Component System |
 |--------------------------|-------------------------|
 |          Ja              |                         |
 
@@ -246,7 +246,7 @@ note:
 
 ### Sind ***ECS*** ***Systeme***?
 
-| Entity Component Sysmtes | Entity Component System |
+| Entities Component Sysmtes | Entity Component System |
 |--------------------------|-------------------------|
 |          Ja              |          Nein           |
 
@@ -381,7 +381,6 @@ typedef struct {
     int y;
 } Player;
 
-DEFINE_DA(Enemy);
 EnemyDa enemies = new_da(...);
 Player player = {...};
 
@@ -414,8 +413,6 @@ typedef struct {
     int y;
 } Entity;
 
-DEFINE_DA(Entity);
-DEFINE_SLICE(Entity);
 EntityDa entities = new_da(...);
 EntitySlice enemies = new_da(...);
 Entity* player = {...};
@@ -465,8 +462,6 @@ typedef struct {
     }
 } Entity;
 
-DEFINE_SLICE(Entitiy);
-DEFINE_DA(Entitiy);
 EntityDa entities = new_da(...);
 EntitySlice enemies = new_da(...);
 Entity* player = {...};
@@ -495,6 +490,111 @@ note:
 - player/enemy genauso einfach änderbar wie davor
 - wenn spiel so strukturiert 
   -> bereits bessere perfomance als 99% aller "indie" spiele (meiner erfahrung nach)
+
+---
+
+TODO: go even further beyond meme
+
+---
+
+TODO: image of mememory levels
+
+note:
+- daten so kompakt wie es geht
+
+---
+
+TODO: memery layout by entity
+
+note:
+- unnötige daten werden koppiert
+- nehmen platz von wichtigen infos weg
+- cache misses -> fetching -> wasted cycles
+
+---
+
+
+```c
+enum EntityType {
+  PLAYER,
+  ENEMY
+};
+
+typedef struct {
+    int x;
+    int y;
+} PositionComponent; 
+
+typedef struct {
+    int atk;
+    int hp;
+    int r;
+} CombatComponent; 
+
+typedef struct {
+    PositionComponent* position;
+    DamageComponent* damage;
+    int defense;
+} EnemyData;
+
+typedef struct {
+    PositionComponent* position;
+    DamageComponent* damage;
+} PlayerData;
+
+typedef struct {
+    EntityType type;
+    union {
+        EnemyData enemy_data;
+        PlayerData player_data;
+    }
+} Entity;
+
+typdef struct {
+    PositionComponentDa positions;
+    CombatComponentDa combat_components;
+} Memory;
+
+// ...
+
+void move_enemies(PositionComponentDa positions) {
+    for (size_t i = 0; i < positions.count; i++) {
+        positions.ptr[i].x--;
+    }
+}
+void move_player(Entity* player) {
+    player->position.x += 2;
+}
+void gravity(PositionComponentDa positions) {
+    for (size_t i = 0; i < positions.count; i++) {
+        positions.ptr[i].y -= positions.ptr[i].y > 0 ? 1 : 0;
+    }
+}
+
+// ...
+
+
+```
+
+note:
+
+- viel mehr code
+- data nun in struct memory
+- struct of arrays != array of structs
+- pointer in den structs, keine daten mehr
+
+---
+
+TODO: code comparison slide
+
+note:
+
+- motivation hinter entity-component-system
+  - performance von großem bsp
+  - aufwand vom kleinen bsp
+- performance links (data oriented) bereits oft ausreichend
+- einfach konvertierbar von data oriented zu full blown ECS impl
+
 
 ---
 
@@ -527,13 +627,23 @@ note:
 - BS argument
   - case study: bloons td -> capped at lv 300 weil performance
   - multiplayer: rollback code
-  - halbwegs gute physics colisions
-  - parickel
-  - Kikaninchen app - imput lag -> schwer zu spielen für target audience
+  - cyberpunk
 - nicht: hab ich performance problem -> wann habe ich performance probleme
 - sind lehrer im raum? 
   -> hab einen kurs belegt on 0 sekunden wurden mit performance oder testing verbacht.
   - nicht verwunderlich, dass spiele so niedrige qualität haben, wenn so gelehrt wird.
+
+---
+
+TODO: image bloons
+
+---
+
+TODO: image cyberpunk
+
+---
+
+TODO: Image roll back multiplayer
 
 ---
 
@@ -599,7 +709,12 @@ note:
 
 ---
 
-TODO: postulates of small talk
+1. Everything Is An Object.
+2. Objects communicate by sending and receiving messages (in terms of objects).
+3. Objects have their own memory (in terms of objects).
+4. Every object is an instance of a class (which must be an object).
+5. The class holds the shared behavior for its instances (in the form of objects in a program list)
+6. To eval a program list, control is passed to the first object and the remainder is treated as its message.
 
 note:
 - erster blick = performance nightmare
@@ -615,25 +730,97 @@ note:
 ---
 
 
+note:
+
+- jedes object braucht eine inbox
+  - einfachten mit ringbuffer
 
 
+---
 
 
+note:
+
+- jedes object braucht eine outbox
+
+---
 
 
+note:
+
+- jedes object brauch compute zeit
+  - ein array mit einem curser der von object to object springt
+
+---
 
 
+note:
+
+- recht einfaches model
+- asyncronous by design
+
+---
+
+TODO: remodeled version der Architektur 
+
+---
+
+note:
+
+- dependencies bestehen nicht mehr bei compile time
+  - runtime only
+- Maximale flexibilität
+
+---
+
+note:
+
+- gut implementierbar in classen systemen 
+
+---
+
+| | Entities Component Systems | Classes | OOP |
+|-| ---------------------------|---------|-----|
+| coupling | high | high | low |
+| performance | high | low | medium |
+| douplication | medium | medium | medium |
+
+note:
 
 
+---
 
+# Parallelization
 
+---
 
+TODO: segment array of objects into chunks 
 
+note:
 
+- sement objects into chunks and go
+- (eventuel sync step am ende)
 
+---
 
+TODO: Fork and join image
 
+---
 
+note:
+- gegeben der code ist funktional geschrieben
+- sehr einfach zu implementieren
+- problem: long running processes
+
+---
+
+TODO: image modified mit long running process
+
+note:
+
+- Beispiel: Dungeon generation
+
+---
 
 
 
