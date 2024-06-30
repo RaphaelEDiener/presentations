@@ -278,6 +278,10 @@ note:
 
 note:
 
+-> write - how quick to write
+-> Agree - ...
+-> *...*
+
 - Vor und nachteile müssen quatifizeirbar sein.
 - Casey Muratori
 - Schnell zu schreiben
