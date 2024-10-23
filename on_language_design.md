@@ -397,40 +397,104 @@ that language would be more desireable than C to do single core programming.
 Since C is poorly defined, the compiler can't do as many agressive optimizations as it could.
 This is bad, since this means the programmer has to do those optimizations manually.
 This is what mainly reduces the understandability of code.
-
+(Given that the programmer does avoids multiple simultanious mutations on the same line.)
 
 **The solution: Compiling to machine code with compile time optimizations.**
 Any interpreted language will always have overhead and not be fast enough.
 So machine code is a must.
 
 
-### horizontally
+### Horizontally
+
+The ease of scaling horizontally heavily depends on the suported abstraction model.
+To prevent colored functions it is important to not differentiate between single core, 
+multi core, and multi machine execution contexts.
+
+But this clone would not bring gains, 
+since this leaves an uncomfortable amount of complexity
+for the programmer to deal with.
+This added complexity increases the surface area for the programmer to make mistakes.
+
+'Syncronisation' is the hard part when it comes to manuel parallel programming.
+Hence any solution should involve a way of streamlining syncronisation 
+in an performance agnostic way.
+
+Syncronisation and effective utilization over multiple computers is even harder than over multiple cores.
+Giving programmers the tools to do it by hand has historically worked worse 
+than giving them a mental model and hiding complexity behind a service layer.
 
 **The solution: **
 1. **Scaling on multiple cores through automatic paralelization.**
+    The compiler should be the one that parallelizes the program. Not the programmer.
+    The compiler has all the required information to parallelize and effectively schedule tasks
+    to an higher degree than any human could.
+    Adding 23879465 + 9128374651 inside your head is hard,
+    but describing an algorithm for addition isn't.
+    The same should be utelized for more systems languages.
+    SQL serves as an example that it can be done and works.
 2. **Scaling on multiple machines through OOP support.**
+    But communication between processes that operate not statically,
+    but dynamically can't be solved by a compiler.
+    For such cases the BEAM model of concurrency has proven to work.
 
 ## Fun
 
-### mental overhead
+### Mental Overhead
 
-### speed
+Mental overhead is the thing that kills most of the fun for me.
+I want to build features, not architectures.
+And while there is certainly some fun to be had in Javas persuit of implementing
+the most basic features in the most complicated way possible,
+it isn't something I want to build a multi milion line code with.
 
-**The solution for both: As little as possible where ever one can.**
+There are several things that increase the cognitive load on the programmer.
+Some of them I've already talked about in the sections on "Readable Operations" and "Error Handling".
+
+The goal is reducing the amount of information the programmer has to hold in his head Simultaniously.
+One thing I've not yet meantioned is strict immutability inside the language (from the POV of the programmer).
+If one can see everything inside the function definition that one needs to know about the function,
+a great deal of documentation reading can be skipped and the process becomes intuitive.
+
+Building up expertiese and getting intuition and then solving problems on intuition alone 
+is not only the most fun way I know to program, but also the fastest.
+
+### Speed
+
+Going fast is important to the dopamine circuits.
+Instant feedback from idea to implementation to realization is important 
+to keep the programmer in the flow state; the most productive state.
+Going fast is fun.
+
+**The solution for speed and mental overhead is: As little as possible where ever one can.**
+This includes minimal syntax, minimal semantic constructs, minimal execution overhead,
+minimal roadblocks, minimal tooling, minimal boilerplate, ...
+
+Languages that embrace that philosophy more are generally more fun to work in.
 
 ## Dependencies
+
+TODO:
 
 **The solution: A good standard library and pull & freeze external source code.**
 
 ## File Structure
 
+TODO:
+
 **The solution: Parsing the entire file and the resolving symbols.**
 
 ## Naviagation
 
+Navigation is more or less a solved problem.
+The problem lies in the solutions.
+Everyone has their own.
+The LSP has a different approach than IDEA, than Emacs, than ...
+
 **The solution:
 Providing parsing utilites for the language inside the standart library,
 and implement common protocols like the *language server protocol*.**
+This way most tools should be able to hook into the LSP implementation,
+while others can leverate the prebuild parser from the language it self.
 
 ## Conclusion
 

@@ -1,0 +1,435 @@
+<h1 id="on-language-design-simple-made-easy-2">On language Design - Simple made Easy (2)</h1>
+<p>Over the years I have used a plethera of programming languages.
+I've currently learned as many programming languages as I am years old,
+and tried even more.</p>
+<p>TODO: insert my tierlist image</p>
+<p>Most people find their home after a few years,
+but I couldn't find one.
+The reason is that I've seen many good ways of tacking certain problems,
+but no language designer has combined the approaches into one cohesive language yet.</p>
+<p>One principle that holds true in many diciplins
+is that people prefer to do what is easy.
+The problem is that what is that some languages make it unreasonable difficult,
+to have the easy solutions also be the simple solutions.</p>
+<blockquote>
+<p><strong>Simple</strong>:
+<em>Simple</em> is the opposite of <em>complex</em>.
+<em>Complexity</em> is the degree of intervovenes with other things.
+When people braid their hair, they are complecting their hairststructure.
+<em>&quot;Something is complex&quot;</em> means that it is heavily intertwined with other things,
+or the whole described thing is heavily intertwined.
+<em>Simple</em> means that the thing is not intertwined with other things,
+and quite literally &quot;straight forward&quot;.</p>
+</blockquote>
+<blockquote>
+<p><strong>Easy</strong>:
+<em>Easy</em> is the opposite of <em>difficult</em>.
+Somethign is <em>difficult</em> if it takes large amounts if effort to achive it.
+<em>Ease</em> describes the amount of effort required.
+Somethign is <em>easy</em> if it doesn't involve effort.</p>
+</blockquote>
+<p>So in the following paragraphs I'll show you common problems I see in languages,
+and give solutions I've discovered on my own,
+or got inspired by other languages I've tried.</p>
+<h2 id="problems">Problems</h2>
+<ul>
+<li>Flexibility
+<ul>
+<li>Type flexibility</li>
+<li>Colored Functions</li>
+</ul>
+</li>
+<li>Correctness
+<ul>
+<li>Error Handling</li>
+<li>Asserts</li>
+</ul>
+</li>
+<li>Readability
+<ul>
+<li>Readable Scoping</li>
+<li>Readable Operations</li>
+</ul>
+</li>
+<li>Performance
+<ul>
+<li>vertically</li>
+<li>horizontally</li>
+</ul>
+</li>
+<li>Fun
+<ul>
+<li>mental overhead</li>
+<li>speed</li>
+</ul>
+</li>
+<li>Dependencies</li>
+<li>File Structure</li>
+<li>Naviagation</li>
+</ul>
+<h2 id="flexibility">Flexibility</h2>
+<p>Often when programs live for a long time,
+they get consecutively harder to change.
+This problem is partially the fault of bad programming practices,
+but also partially the fault of the language it self,
+either not offering the required primitives,
+or not directing the programmers to a flexible solution.</p>
+<h3 id="flexibility-type-flexibility">Flexibility - Type flexibility</h3>
+<p>Bad type flexibility is easily described with an example program.
+In this case I'll use Java as a particularly agregious example:</p>
+<pre><code class="language-java">int someMath(int x, int y) {
+    x = x + y;
+    // ...
+    return x;
+}
+</code></pre>
+<p>This is a horrible function from a flexibility standpoint.
+If we want to change the types,
+we have to change it in the function signature.
+Meaning that if we modify the last line in the function to alter the return type,
+we need to adjust the very first line of the program too.
+We have artifically increased the difficulty of performing a simple change.</p>
+<p>It get's even worse if we want to change one of the two input parameters.
+The function contains the <code>+</code> operation.
+This is only defined on a specific subset of buildins.
+Meaning we can't alter the types to one of our own defined types easily,
+because that will involve altering the function body too.</p>
+<p><strong>The solution: Just don't annotate types.</strong>
+If the language doesn't require the programmer to annotate types,
+the language it self makes the code way easier to change.</p>
+<h3 id="flexibility-colored-functions">Flexibility - Colored Functions</h3>
+<p>The next example is often more subtle and harder to spot for novices.
+Yet, it is even more dangerous than my first case of <em>Type flexibility</em>.</p>
+<p>Let's examine the following setup:</p>
+<ol start="0">
+<li>There are two types of functions: Red | Blue.</li>
+<li>Blue functions can call red functions.</li>
+<li>Red functions can NOT call blue functions.</li>
+<li>Blue functions can call blue functions.</li>
+<li>Red functions can call red functions.</li>
+<li>Blue functions have an overhead that red functions don't have.</li>
+<li>The overhead of blue functions allows them to make operations,
+that are not possible inside red functions.</li>
+</ol>
+<p>In this case we have created two classes of functions.
+The faster red functions and the slower but more flexible blue functions.</p>
+<p>Given this setup it is only natural that we will end up in a situation,
+where we have to call a blue function from a red function.
+If we want the advanced capabilities of the blue functions,
+we will need to convert the faster red function into a slower blue function.
+But then all other red function that relied on the one we just turned blue,
+also need to turn blue because only blue functions can call other blue functions.
+A chain reaction ripples through the type system.</p>
+<p>The inverse case is also not really better.
+If we decide to not use a blue feature inside a blue function,
+because we don't need it anymore,
+we don't need to touch the function signature and convert the function to red.
+But red functions are faster.
+So if we want to be good programmers,
+we should convert this function to a red function to get a free speed up.
+But now we also need to check every function that called this function
+to check if we can also turn them red.
+Faced with this difficulty the programmer stops and doesn't bother anymore.</p>
+<p>The result are slow and sluggish programs.</p>
+<p>What I've described can be observed in different forms in different languages.
+The most common occurence of this is the <code>async</code> keyword found in
+JavaScript, C#, and other languages of their kind.</p>
+<p>In cases like these, programmers of functional languages feel superior
+and start praising their monadic type structures without realizing,
+that they have done the same.</p>
+<p><strong>The solution: Don't have blue functions.</strong>
+This should get handled by the language through buildins
+and primitives. Not by the programmer inside their programs.</p>
+<h2 id="correctness">Correctness</h2>
+<p>Correctness is important.
+I feels wrong that I even have to say this much,
+but in a world where language designers often just
+vaguely gesture into the direction of correctness
+and programmers often conflate it with safety,
+throwing both in the wind for the sake of &quot;time to market&quot;,
+it feels important to say it again.
+Correctness is important.</p>
+<p>I want to have my programs compile and work.
+I don't want to get woken up at 3am,
+because I introduced a bug that impeeds a costumer.
+I don't want to be resposible for low quality software,
+that crashes, freezes, and doesn't do what the user wants.</p>
+<p>It is important that languages them selfs
+alread provide ways of checking for correctness,
+because they can often do it quicker and more reliable,
+than checks introduced by the programmers.
+Programmer introduced correctness checks are not easy to implement.
+They require a huge amount of communication and discipline.
+Two things programmers are notoriously bad at.</p>
+<h3 id="error-handling">Error Handling</h3>
+<p>One facet of correctness is how the language deals with faliours.
+The worst solution is to do nothing
+and let the program continue in an invalid state.
+No language actively used does this to my knowledge.</p>
+<p>The second worst model of handling errors is to <code>throw</code> them.
+<code>raise</code> and <code>throw</code> models of error propagation are faulty to the core,
+for the same reason, global variables are a bad idea.
+The programmer needs to know not only the exceptions that his function will raise,
+but all the exceptions that can be thrown in all the function that they use.</p>
+<pre><code>int some_function() {
+    other_function();
+}
+int other_function() {
+    third_function();
+}
+int third_function() {
+    throw SomeException;
+}
+</code></pre>
+<p>In the septup above we can clearly see what the problem is.
+To understand that <code>some_function</code> can error,
+the programmer must know that <code>other_function</code> calls <code>third_function</code>,
+and under what circumstances <code>third_function</code> can fail.</p>
+<p>This hierachy only has 3 levels, but given the size of code bases,
+this seems a laughable small example and not even close in complexity,
+to real code.
+Throwing exception is a bad idea. Always.</p>
+<p>The Java programmers reading this will already have jumped up and exclaimed that:
+&quot;Java doesn't have this problem anymore! The compiler warns you of unhandled exceptions!&quot;
+First of all, this is false.
+Java only warns you for a certain type of missed fail states.
+Not all fail states.
+But they are onto something.
+Java has realized that there is an advantage of having failure information encoded into the typesystem.</p>
+<p>This leads us to the now prominent paradigm in most languages for handling failure: Monads.
+Monads encapsulate the posible states into a single state-object,
+that the programmer is then forced to <code>unwrap</code> before they can use it.
+This removes the problem of unknown/invisible failure conditions,
+since all failure conditions are enforced by the type system.</p>
+<p>But monads are a bad solution because of their specificity.
+What would happen if we swapped a <code>Result</code> with a <code>Option</code>?
+The program wouldn't compile even if the error handling could remain identical.
+The most <code>Result</code> implementations I've seen also force you to do double pattern matching.
+First for the <code>OK</code>/<code>ERR</code> case and then for what kind of error you got.</p>
+<p><strong>The solution: Type sets.</strong>
+While monads are a step in the right direction,
+why shouldn't we just return sets of possible values.
+Just give programmers to specify directly that the function will return
+one of the members of a set. E.g <code>{ Type1, Err1, Err2 }</code>.
+This has all the advantages of monads with the advantage,
+that we don't need additional language constructs to handle different monadic cases.</p>
+<ul>
+<li><code>Option</code> -&gt; <code>{ T, Null }</code></li>
+<li><code>Result</code> -&gt; <code>{ T, Err  }</code></li>
+<li><code>Either</code> -&gt; <code>{ T, U }</code></li>
+<li>...</li>
+</ul>
+<h3 id="asserts">Asserts</h3>
+<p>Programmers are often in the situation where the language provided type system
+is not enough to express the required preconditions.
+In such cases the default escape patch by many languages is the <code>assert</code> statement.</p>
+<p>Asserts check during runtime if the required invariants hold.
+This is maybe acceptable in interpreted languages that don't have a compile step.
+But it becomes an undesireble antipattern in compiled languages.
+Yet, we need a way of expressing increasingly complex preconditions inside our programs,
+without having typesystems that require a phd to understand.</p>
+<p><strong>The solution: Constraint type sets.</strong>
+I already introduced the notion of a type set while talking about error handling.
+There is nothing that prevents us
+of adding additional information about the members into the set.</p>
+<p>This could be done through a <code>where</code> clause or something similar.</p>
+<h2 id="readability">Readability</h2>
+<h3 id="readable-scoping">Readable Scoping</h3>
+<p>One problem that plagues many languages that are not whitespace significant,
+is the increasing amount of required indenting.
+Let's look at Java/C# for a possible worst case:</p>
+<pre><code class="language-java">class MyClass {
+    int my_function() {
+        // function content...
+    }
+}
+</code></pre>
+<p>This type of indentation requires 2 levels of indentation
+before the programmer even starts to write any productive code.
+Let's throw in a <code>for</code> loop or two and an <code>if</code> statement for good measure,
+and you already hit the magical &quot;<em>for levels of indetation</em>&quot; that should be the maximum.
+Anything beyond that just is unreasonably hard to read.
+Anyone who had to work in a deeply nested JSON can attest to that.</p>
+<p>We need a way of doing namespacing and expressing control structure
+without increasing the levels of indent to an unreasonable level.</p>
+<p><strong>The solution: Files as namespaces and method chaining syntax support.</strong></p>
+<p>For this solution I've taken a page out of Pythons book.
+There files are treated as namespaces already.
+So we can save one level of indent from that already.
+We can also enable the use of the <code>object.method()</code> syntax
+if we just make the generic <code>self</code> explicit:</p>
+<pre><code>struct Integer {...}
+Integer inc(&amp;Integer x) {
+    return x + 1;
+}
+Integer(1).inc()  // == 2
+</code></pre>
+<p>By enabling dot operations on structs we have also unlocked method chaining.
+Method chaining on iterators has the advantage that even more complex filters
+and maps don't increase the indent level and can be read from top to bottom.
+Those approches combine to result in more left leaning code.</p>
+<h3 id="readable-operations">Readable Operations</h3>
+<p>But indent isn't everything there is to readability.
+We can all agree that <code>Integer(1).add(Integer(2)).mul(Integer(3))</code> is harder to read than <code>1 + 2 * 3</code>.
+But at the same time <code>StructOne + StructOne</code> is more anbiguous in languages,
+that allow you operator overloading of primitive operators.
+As far as I am concerned, parametric polimorphism as found in Java is the devil
+and any code base that uses it should be burned.</p>
+<pre><code class="language-java">// definition
+class MyClass {
+    void my_fun(MyClass    x) {...}
+    void my_fun(OtherClass x) {...}
+}
+// calling
+{
+    myObj.my_fun(someObj)  // what function is called?
+}
+</code></pre>
+<p>This type of overloading that allows objects of different interfaces
+to be passed into the function with the same name only leads to confusion.</p>
+<p>Another problem of readability is how most Rust and Cpp code reads to me:
+<code>&lt;&lt;{::[]&gt;:}:&lt;&gt;:{[]]:&lt;&lt;:}:::{&gt;&gt;}}&gt;&gt;:]:::&lt;::&gt;</code>
+When I want to read programs I want to know what the program does.
+Having half my screen filled with just noise is as irritating as whitespace.</p>
+<p>The other extreme from Rust would be something like APL or BQN.
+Having Conways Game of Life as a one liner is cool,
+but unreadable for most programmers.
+<code>life ← {⊃1 ⍵ ∨.∧ 3 4 = +/ +⌿ ¯1 0 1 ∘.⊖ ¯1 0 1 ⌽¨ ⊂⍵}</code></p>
+<p>We are used to the information density that we encounter in the rest of our lifes.
+Hence an ergonomic programming language should mirror that information density
+to the best of it's ability.
+Maybe the increased use of glyphs in communication
+will lead us to increase the information density in programming languages one day,
+but for now this is not the case.</p>
+<p><strong>The solution: Avoid operator overloading and focus on a minimal set of glypths.</strong></p>
+<p>While parametric overloading <em>can</em> become an antipattern,
+it does so under the condition that the accepted input adheres to different interfaces,
+or the function body exhibits different characteristics.
+I've never heard programmers complain about OCamls automatic parametrisation of functions.
+So overloading should be allowed and encouraged while the symbols must maintain their syntactic implications.</p>
+<p>As an example consider addition.
+The <code>+</code> operator that we know from math classes takes two different values and returns a third one
+that represents a sum of some sort.
+Meaning every implementation of the <code>+</code> operator should adhere to these guidelines.
+Again, people get confused by unexpected behaviour.
+Element wise addition of vectors using <code>+</code> seems normal
+and expected even to studentes learning about them for the first time.</p>
+<p>Semantic shadowing on the other hand is always evil.
+Never do it!</p>
+<p>The semantic density of our programs can be brought by this
+closer to what we would exprect from a text message.
+<code>result = value |&gt; function |&gt; function</code> reads better than <code>result = function(function(value))</code>.
+&quot;How many braces am I deep&quot; should never be asked by programmers.
+We can eliveate some of that if we would adopt more glyph combinations in our languages.
+Using the magic of ligatures, we can even include more complicated glyphs
+that still read in ASCII.</p>
+<h2 id="performance">Performance</h2>
+<h3 id="vertically">vertically</h3>
+<p>Vertical performance describes how far we can scale using a single machine.
+I'm going even further and will use the term here as &quot;how far you can scale on a single core&quot;.</p>
+<p>Often people suppose a false dichotomy between effort for programmers,
+reduced readability and maintainability.
+Yes, C would probably be the language one would choose
+to leverage a single core to the best of it's ability.
+But why C and not Assembler?
+The reason I've heard over the years is the direct and unbagious mapping from C
+to Assembler while providing the confort of a higher level language.</p>
+<p>I'd like to introject that C is increadibly poorly defined for a programming language.
+This means if we had a programming language that would specify in completeness
+how it handles the transformation and is as honest as possible,
+that language would be more desireable than C to do single core programming.</p>
+<p>Since C is poorly defined, the compiler can't do as many agressive optimizations as it could.
+This is bad, since this means the programmer has to do those optimizations manually.
+This is what mainly reduces the understandability of code.
+(Given that the programmer does avoids multiple simultanious mutations on the same line.)</p>
+<p><strong>The solution: Compiling to machine code with compile time optimizations.</strong>
+Any interpreted language will always have overhead and not be fast enough.
+So machine code is a must.</p>
+<h3 id="horizontally">Horizontally</h3>
+<p>The ease of scaling horizontally heavily depends on the suported abstraction model.
+To prevent colored functions it is important to not differentiate between single core,
+multi core, and multi machine execution contexts.</p>
+<p>But this clone would not bring gains,
+since this leaves an uncomfortable amount of complexity
+for the programmer to deal with.
+This added complexity increases the surface area for the programmer to make mistakes.</p>
+<p>'Syncronisation' is the hard part when it comes to manuel parallel programming.
+Hence any solution should involve a way of streamlining syncronisation
+in an performance agnostic way.</p>
+<p>Syncronisation and effective utilization over multiple computers is even harder than over multiple cores.
+Giving programmers the tools to do it by hand has historically worked worse
+than giving them a mental model and hiding complexity behind a service layer.</p>
+<p>**The solution: **</p>
+<ol>
+<li><strong>Scaling on multiple cores through automatic paralelization.</strong>
+The compiler should be the one that parallelizes the program. Not the programmer.
+The compiler has all the required information to parallelize and effectively schedule tasks
+to an higher degree than any human could.
+Adding 23879465 + 9128374651 inside your head is hard,
+but describing an algorithm for addition isn't.
+The same should be utelized for more systems languages.
+SQL serves as an example that it can be done and works.</li>
+<li><strong>Scaling on multiple machines through OOP support.</strong>
+But communication between processes that operate not statically,
+but dynamically can't be solved by a compiler.
+For such cases the BEAM model of concurrency has proven to work.</li>
+</ol>
+<h2 id="fun">Fun</h2>
+<h3 id="mental-overhead">Mental Overhead</h3>
+<p>Mental overhead is the thing that kills most of the fun for me.
+I want to build features, not architectures.
+And while there is certainly some fun to be had in Javas persuit of implementing
+the most basic features in the most complicated way possible,
+it isn't something I want to build a multi milion line code with.</p>
+<p>There are several things that increase the cognitive load on the programmer.
+Some of them I've already talked about in the sections on &quot;Readable Operations&quot; and &quot;Error Handling&quot;.</p>
+<p>The goal is reducing the amount of information the programmer has to hold in his head Simultaniously.
+One thing I've not yet meantioned is strict immutability inside the language (from the POV of the programmer).
+If one can see everything inside the function definition that one needs to know about the function,
+a great deal of documentation reading can be skipped and the process becomes intuitive.</p>
+<p>Building up expertiese and getting intuition and then solving problems on intuition alone
+is not only the most fun way I know to program, but also the fastest.</p>
+<h3 id="speed">Speed</h3>
+<p>Going fast is important to the dopamine circuits.
+Instant feedback from idea to implementation to realization is important
+to keep the programmer in the flow state; the most productive state.
+Going fast is fun.</p>
+<p><strong>The solution for speed and mental overhead is: As little as possible where ever one can.</strong>
+This includes minimal syntax, minimal semantic constructs, minimal execution overhead,
+minimal roadblocks, minimal tooling, minimal boilerplate, ...</p>
+<p>Languages that embrace that philosophy more are generally more fun to work in.</p>
+<h2 id="dependencies">Dependencies</h2>
+<p>TODO:</p>
+<p><strong>The solution: A good standard library and pull &amp; freeze external source code.</strong></p>
+<h2 id="file-structure">File Structure</h2>
+<p>TODO:</p>
+<p><strong>The solution: Parsing the entire file and the resolving symbols.</strong></p>
+<h2 id="naviagation">Naviagation</h2>
+<p>Navigation is more or less a solved problem.
+The problem lies in the solutions.
+Everyone has their own.
+The LSP has a different approach than IDEA, than Emacs, than ...</p>
+<p><strong>The solution:
+Providing parsing utilites for the language inside the standart library,
+and implement common protocols like the <em>language server protocol</em>.</strong>
+This way most tools should be able to hook into the LSP implementation,
+while others can leverate the prebuild parser from the language it self.</p>
+<h2 id="conclusion">Conclusion</h2>
+<p>Non of the solutions inside here are the deadly combination of
+difficult and complex.
+They are either complex and easy or difficult and simple.
+There is no excuse for language designers to not implement them,
+or similar solutions in languages inteded for production use.</p>
+<p>I have little hope of these solutions getting implemented
+inside mainstream languages.
+The compilers are often badly structured or weight down by decades of churn and dept.</p>
+<p>The best hope is probably a new language.
+This is why I'm currently implementing those probosed solutions
+inside my own language <em>Taipan</em>.
+The problem is that this takes time.</p>
+<p>I hope that I could give you a hint where to focus your tooling effort in the meantime,
+and not waste time on the right wrong problems.
+Everything complex and easy is the domain of langue implementers.
+Everything simple but difficult can be solveed by tools.</p>
+<p>Have fun programming.</p>
+
