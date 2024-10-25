@@ -473,15 +473,65 @@ Languages that embrace that philosophy more are generally more fun to work in.
 
 ## Dependencies
 
-TODO:
+In recent years we could observe the incredible achievement of our industry 
+of promissing improvements to dependency management 
+while simultaniously managing to create worse and worse solutions for the problem.
+
+NPM, Maven, PIP, and many others have lead to projects overrelying on dependecies 
+that they don't understand and don't need.
+This has eroded code quality at an even faster paste than it does naturally,
+while also presuring multiple maintainers to burnout with spam requests.
 
 **The solution: A good standard library and pull & freeze external source code.**
 
+One method of dependecy management that was more prominent in the olden days,
+was just getting mailed the source code for the library.
+This is now even easier to do and update.
+We have git servers like github and gitlab.
+This is a valid approach and most of the time easier than going through an package manager.
+
+Additionally this has the benefit that you control the entire source code that is needed
+to build the application.
+This makes it a lot easier to set up for a new developer comming to the project.
+
+Another observation that can be made is that languages with a richer standart library
+have less need to introduce external dependencies.
+This sadly doesn't mean that the ecosystem will be healthier.
+The Python community has one of the most vast standard libraries,
+but the communicy created a jungle of package managers and dependency jenga
+including polyglot setups.
+To be fair, the natural habitat of a python.
+
+So the standard should be as convinent to use and as powerfull,
+that no user feels to need to download external libraries for basic applications.
+
 ## File Structure
 
-TODO:
+The more complicated the file structure, the more difficult navigating the project becomes.
+Files should carry significant semantic information.
+Sadly there are two extremes observed in reality.
+
+1. The giant files common in the C language that try to program everything in one file.
+    This is less and less a problem with increasing tooling support and more powerfull computers,
+    but we can still do unity builds with `#include`s that allows us to keep the code cohesive.
+2. The other extreme is the forced fragmentation found in the Java language.
+    This only leads to semantic scattering and sparceness of ideas,
+    making it significantly harder to navigate the code as a result.
+
+The other proble is the the content of the files is not sorted by any human metric.
+Most of the time they are sorted by the required scoping from the compiler.
+
+If I open a file I don't want to read all your imports, then copy right notice, 
+then scope declaration and finaly after 500 lines I get the first implemented logic.
 
 **The solution: Parsing the entire file and the resolving symbols.**
+Both of the problems can be (mostly) solved this way.
+By parsing the entire file and then evaluating it,
+we leave the order of declarations to the programmer.
+
+This also solves the problem of semantic speading 
+because the implementation on the compilers side will enable the programmer
+to set semantic boundaries where they want.
 
 ## Naviagation
 
