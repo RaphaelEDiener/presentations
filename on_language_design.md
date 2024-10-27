@@ -1,25 +1,25 @@
 # On language Design - Simple made Easy (2)
 
-Over the years I have used a plethera of programming languages.
+Over the years I have used a plethora of programming languages.
 I've currently learned as many programming languages as I am years old,
 and tried even more.
 
-TODO: insert my tierlist image
+![language tier list](tierlist_langs.png)
 
 Most people find their home after a few years,
 but I couldn't find one.
 The reason is that I've seen many good ways of tacking certain problems,
 but no language designer has combined the approaches into one cohesive language yet.
 
-One principle that holds true in many diciplins 
+One principle that holds true in many diciplines 
 is that people prefer to do what is easy.
 The problem is that what is that some languages make it unreasonable difficult,
 to have the easy solutions also be the simple solutions.
 
 > **Simple**:
 > *Simple* is the opposite of *complex*.
-> *Complexity* is the degree of intervovenes with other things.
-> When people braid their hair, they are complecting their hairststructure.
+> *Complexity* is the degree of interwovenes with other things.
+> When people braid their hair, they are complecting their hair structure.
 > *"Something is complex"* means that it is heavily intertwined with other things,
 > or the whole described thing is heavily intertwined.
 > *Simple* means that the thing is not intertwined with other things,
@@ -27,13 +27,15 @@ to have the easy solutions also be the simple solutions.
 
 > **Easy**:
 > *Easy* is the opposite of *difficult*.
-> Somethign is *difficult* if it takes large amounts if effort to achive it.
+> Something is *difficult* if it takes large amounts if effort to achieve it.
 > *Ease* describes the amount of effort required.
-> Somethign is *easy* if it doesn't involve effort.
+> Something is *easy* if it doesn't involve effort.
+>
+> For more information/detail look at [Simple Made Easy by Rich Hickey](https://youtu.be/SxdOUGdseq4?si=WKgWJaEFdXtNv4CW)
 
 So in the following paragraphs I'll show you common problems I see in languages,
 and give solutions I've discovered on my own,
-or got inspired by other languages I've tried.
+or got inspired to by other languages I've tried.
 
 ## Problems
 
@@ -60,7 +62,7 @@ or got inspired by other languages I've tried.
 
 Often when programs live for a long time,
 they get consecutively harder to change.
-This problem is partially the fault of bad programming practices,
+This problem is partially the fault of bad programming practices [5, 6],
 but also partially the fault of the language it self,
 either not offering the required primitives,
 or not directing the programmers to a flexible solution.
@@ -158,6 +160,8 @@ throwing both in the wind for the sake of "time to market",
 it feels important to say it again.
 Correctness is important.
 
+> "*Simplicity is prerequisite for reliability*" - Edsger Dijkstra
+
 I want to have my programs compile and work.
 I don't want to get woken up at 3am, 
 because I introduced a bug that impeeds a costumer.
@@ -225,7 +229,7 @@ But monads are a bad solution because of their specificity.
 What would happen if we swapped a `Result` with a `Option`?
 The program wouldn't compile even if the error handling could remain identical.
 The most `Result` implementations I've seen also force you to do double pattern matching.
-First for the `OK`/`ERR` case and then for what kind of error you got.
+First for the `OK`/`ERR` case and then for what kind of error you got. [6]
 
 **The solution: Type sets.**
 While monads are a step in the right direction,
@@ -408,7 +412,7 @@ So machine code is a must.
 
 The ease of scaling horizontally heavily depends on the suported abstraction model.
 To prevent colored functions it is important to not differentiate between single core, 
-multi core, and multi machine execution contexts.
+multi core, and multi machine execution contexts. [9]
 
 But this clone would not bring gains, 
 since this leaves an uncomfortable amount of complexity
@@ -431,11 +435,11 @@ than giving them a mental model and hiding complexity behind a service layer.
     Adding 23879465 + 9128374651 inside your head is hard,
     but describing an algorithm for addition isn't.
     The same should be utelized for more systems languages.
-    SQL serves as an example that it can be done and works.
+    SQL serves as an example that it can be done and works. [7]
 2. **Scaling on multiple machines through OOP support.**
     But communication between processes that operate not statically,
     but dynamically can't be solved by a compiler.
-    For such cases the BEAM model of concurrency has proven to work.
+    For such cases the BEAM model of concurrency has proven to work. [9]
 
 ## Fun
 
@@ -569,3 +573,34 @@ Everything complex and easy is the domain of langue implementers.
 Everything simple but difficult can be solveed by tools.
 
 Have fun programming.
+
+## Important Vocabulary
+
+| Word       | English Definition | German Translation |
+|------------|--------------------|--------------------|
+| Language   | Any of numerous systems of precisely defined symbols and rules devised for writing programs or representing instructions and data that can be processed and executed by a computer. | Sprache |
+| Code       | Any system of symbols and rules for expressing information or instructions in a form usable by a computer or other digital machine for processing or transmitting information. Also: information or instructions written according to such a system.| Kode |
+| Type       | A set of values with a common representation scheme that a verification system treats as belonging to the same group. | Typ |
+| Solution   | A particular instance or method of solving or settling; an explanation, answer, or decision. & The action of breaking up or separating; dissolution; bringing to an end. | Lösung |
+| Flexibility| The ability to change or be changed easily according to the situation | Flexibilität |
+| Correctness| The quality or state of being free from error; accuracy. | Korrekt |
+| Overhead   | The regular and necessary costs, such as rent, heat, electricity, and telephone, involved in an activity |Zusatzaufwand |
+| Complex    | folded/braided together | Komplex |
+| Simple     | one fold/braid | Einfältig |
+| Easy       | Achieved without great effort; presenting few difficulties; to lie near | Einfach |
+
+Definitions from the [OED](https://www.oed.com/) and the [CED](https://dictionary.cambridge.org/)
+
+## Source Listing
+
+1. [Simple Made Easy - Rich Hickey - Strange Loop 2011](https://youtu.be/SxdOUGdseq4?si=WKgWJaEFdXtNv4CW)
+2. [The Worst Programming Language Ever - Mark Rendel - NDC Oslo 2021](https://youtu.be/vcFBwt1nu2U?si=ZM2xSM_tsjIsGdrr)
+3. [From Programmer to Sofware Engineer - Playlist](https://youtube.com/playlist?list=PLQtfnAzqs28uz1EALwFxzkHaQLxebOGCA&si=o0F-kV29zz3JBGsP)
+4. [What Color is Your Function - Bob Nystrom - Blog 2015](https://journal.stuffwithstuff.com/2015/02/01/what-color-is-your-function/)
+5. ["Clean" Code, Horrible Performance - Casey Muratori - Youtube 2023](https://youtu.be/tD5NrevFtbU?si=Ja77-oQ8-dNoBmQ8)
+5. [HOW DO COMMITTEES INVENT? - Melvin Conway - 1968](https://www.melconway.com/Home/pdf/committees.pdf)
+6. ["Monad I Love You Now Get Out Of My Type System" - Gjeta Gjyshinca - Strange Loop 2022](https://youtu.be/2PxsyWqZ5dI?si=mPWo5yHrAhBFmgTj)
+7. ["I See What You Mean" - Peter Alvaro - Strange Loop 2015](https://youtu.be/R2Aa4PivG0g?si=QJr5iI21hJzS0swk)
+8. [Clean Coders Hate What Happens to Your Code When You Use These Enterprise Programming Tricks - Kevlin Henney - NDC 2017](https://youtu.be/FyCYva9DhsI?si=VFhOUwTqQojj4S-k)
+9. ["Systems that run forever self-heal and scale" - Joe Armstrong - Strange Loop 2013](https://youtu.be/cNICGEwmXLU?si=h0brbS6vahL-tiWX)
+
