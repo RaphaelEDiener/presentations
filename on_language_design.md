@@ -11,7 +11,7 @@ but I couldn't find one.
 The reason is that I've seen many good ways of tacking certain problems,
 but no language designer has combined the approaches into one cohesive language yet.
 
-One principle that holds true in many diciplines 
+One principle that holds true in many disciplines 
 is that people prefer to do what is easy.
 The problem is that what is that some languages make it unreasonable difficult,
 to have the easy solutions also be the simple solutions.
@@ -56,7 +56,7 @@ or got inspired to by other languages I've tried.
   - speed
 - Dependencies
 - File Structure
-- Naviagation
+- Navigation
 
 ## Flexibility
 
@@ -70,7 +70,7 @@ or not directing the programmers to a flexible solution.
 ### Flexibility - Type flexibility
 
 Bad type flexibility is easily described with an example program.
-In this case I'll use Java as a particularly agregious example:
+In this case I'll use Java as a particularly egregious example:
 
 ```java
 int someMath(int x, int y) {
@@ -85,11 +85,11 @@ If we want to change the types,
 we have to change it in the function signature.
 Meaning that if we modify the last line in the function to alter the return type,
 we need to adjust the very first line of the program too.
-We have artifically increased the difficulty of performing a simple change.
+We have artificially increased the difficulty of performing a simple change.
 
 It get's even worse if we want to change one of the two input parameters.
 The function contains the `+` operation.
-This is only defined on a specific subset of buildins.
+This is only defined on a specific subset of build-ins.
 Meaning we can't alter the types to one of our own defined types easily,
 because that will involve altering the function body too.
 
@@ -138,7 +138,7 @@ Faced with this difficulty the programmer stops and doesn't bother anymore.
 The result are slow and sluggish programs.
 
 What I've described can be observed in different forms in different languages.
-The most common occurence of this is the `async` keyword found in 
+The most common occurrence of this is the `async` keyword found in 
 JavaScript, C#, and other languages of their kind.
 
 In cases like these, programmers of functional languages feel superior
@@ -146,7 +146,7 @@ and start praising their monadic type structures without realizing,
 that they have done the same.
 
 **The solution: Don't have blue functions.**
-This should get handled by the language through buildins
+This should get handled by the language through build-ins
 and primitives. Not by the programmer inside their programs.
 
 ## Correctness
@@ -164,12 +164,12 @@ Correctness is important.
 
 I want to have my programs compile and work.
 I don't want to get woken up at 3am, 
-because I introduced a bug that impeeds a costumer.
-I don't want to be resposible for low quality software,
+because I introduced a bug that impedes a costumer.
+I don't want to be responsible for low quality software,
 that crashes, freezes, and doesn't do what the user wants.
 
-It is important that languages them selfs 
-alread provide ways of checking for correctness,
+It is important that languages them selves 
+already provide ways of checking for correctness,
 because they can often do it quicker and more reliable,
 than checks introduced by the programmers.
 Programmer introduced correctness checks are not easy to implement.
@@ -178,7 +178,7 @@ Two things programmers are notoriously bad at.
 
 ### Error Handling
 
-One facet of correctness is how the language deals with faliours.
+One facet of correctness is how the language deals with failures.
 The worst solution is to do nothing 
 and let the program continue in an invalid state.
 No language actively used does this to my knowledge.
@@ -201,12 +201,12 @@ int third_function() {
 }
 ```
 
-In the septup above we can clearly see what the problem is.
+In the setup above we can clearly see what the problem is.
 To understand that `some_function` can error,
 the programmer must know that `other_function` calls `third_function`,
 and under what circumstances `third_function` can fail.
 
-This hierachy only has 3 levels, but given the size of code bases,
+This hierarchy only has 3 levels, but given the size of code bases,
 this seems a laughable small example and not even close in complexity,
 to real code.
 Throwing exception is a bad idea. Always.
@@ -217,10 +217,10 @@ First of all, this is false.
 Java only warns you for a certain type of missed fail states.
 Not all fail states.
 But they are onto something.
-Java has realized that there is an advantage of having failure information encoded into the typesystem.
+Java has realized that there is an advantage of having failure information encoded into the type system.
 
 This leads us to the now prominent paradigm in most languages for handling failure: Monads.
-Monads encapsulate the posible states into a single state-object,
+Monads encapsulate the possible states into a single state-object,
 that the programmer is then forced to `unwrap` before they can use it.
 This removes the problem of unknown/invisible failure conditions,
 since all failure conditions are enforced by the type system.
@@ -252,9 +252,9 @@ In such cases the default escape patch by many languages is the `assert` stateme
 
 Asserts check during runtime if the required invariants hold.
 This is maybe acceptable in interpreted languages that don't have a compile step.
-But it becomes an undesireble antipattern in compiled languages.
+But it becomes an undesirable antipattern in compiled languages.
 Yet, we need a way of expressing increasingly complex preconditions inside our programs,
-without having typesystems that require a phd to understand.
+without having type systems that require a PHD to understand.
 
 **The solution: Constraint type sets.**
 I already introduced the notion of a type set while talking about error handling.
@@ -282,11 +282,11 @@ class MyClass {
 This type of indentation requires 2 levels of indentation 
 before the programmer even starts to write any productive code.
 Let's throw in a `for` loop or two and an `if` statement for good measure,
-and you already hit the magical "*for levels of indetation*" that should be the maximum.
+and you already hit the magical "*for levels of indentation*" that should be the maximum.
 Anything beyond that just is unreasonably hard to read.
 Anyone who had to work in a deeply nested JSON can attest to that.
 
-We need a way of doing namespacing and expressing control structure 
+We need a way of doing name spacing and expressing control structure 
 without increasing the levels of indent to an unreasonable level. 
 
 **The solution: Files as namespaces and method chaining syntax support.**
@@ -308,15 +308,15 @@ Integer(1).inc()  // == 2
 By enabling dot operations on structs we have also unlocked method chaining.
 Method chaining on iterators has the advantage that even more complex filters 
 and maps don't increase the indent level and can be read from top to bottom.
-Those approches combine to result in more left leaning code.
+Those approaches combine to result in more left leaning code.
 
 ### Readable Operations
 
 But indent isn't everything there is to readability.
 We can all agree that `Integer(1).add(Integer(2)).mul(Integer(3))` is harder to read than `1 + 2 * 3`.
-But at the same time `StructOne + StructOne` is more anbiguous in languages,
+But at the same time `StructOne + StructOne` is more ambiguous in languages,
 that allow you operator overloading of primitive operators.
-As far as I am concerned, parametric polimorphism as found in Java is the devil 
+As far as I am concerned, parametric polymorphism as found in Java is the devil 
 and any code base that uses it should be burned.
 
 ```java
@@ -340,41 +340,41 @@ When I want to read programs I want to know what the program does.
 Having half my screen filled with just noise is as irritating as whitespace.
 
 The other extreme from Rust would be something like APL or BQN.
-Having Conways Game of Life as a one liner is cool, 
+Having Conway's Game of Life as a one liner is cool, 
 but unreadable for most programmers.
 `life ← {⊃1 ⍵ ∨.∧ 3 4 = +/ +⌿ ¯1 0 1 ∘.⊖ ¯1 0 1 ⌽¨ ⊂⍵}`
 
-We are used to the information density that we encounter in the rest of our lifes.
+We are used to the information density that we encounter in the rest of our lives.
 Hence an ergonomic programming language should mirror that information density 
 to the best of it's ability.
 Maybe the increased use of glyphs in communication 
 will lead us to increase the information density in programming languages one day,
 but for now this is not the case.
 
-**The solution: Avoid operator overloading and focus on a minimal set of glypths.**
+**The solution: Avoid operator overloading and focus on a minimal set of glyphs.**
 
 While parametric overloading *can* become an antipattern,
 it does so under the condition that the accepted input adheres to different interfaces,
 or the function body exhibits different characteristics.
-I've never heard programmers complain about OCamls automatic parametrisation of functions.
+I've never heard programmers complain about OCamls automatic parametrization of functions.
 So overloading should be allowed and encouraged while the symbols must maintain their syntactic implications.
 
 As an example consider addition.
 The `+` operator that we know from math classes takes two different values and returns a third one
 that represents a sum of some sort.
 Meaning every implementation of the `+` operator should adhere to these guidelines.
-Again, people get confused by unexpected behaviour.
+Again, people get confused by unexpected behavior.
 Element wise addition of vectors using `+` seems normal 
-and expected even to studentes learning about them for the first time.
+and expected even to students learning about them for the first time.
 
 Semantic shadowing on the other hand is always evil.
 Never do it!
 
 The semantic density of our programs can be brought by this 
-closer to what we would exprect from a text message.
+closer to what we would expect from a text message.
 `result = value |> function |> function` reads better than `result = function(function(value))`.
 "How many braces am I deep" should never be asked by programmers.
-We can eliveate some of that if we would adopt more glyph combinations in our languages.
+We can alleviate some of that if we would adopt more glyph combinations in our languages.
 Using the magic of ligatures, we can even include more complicated glyphs 
 that still read in ASCII.
 
@@ -390,18 +390,18 @@ reduced readability and maintainability.
 Yes, C would probably be the language one would choose 
 to leverage a single core to the best of it's ability.
 But why C and not Assembler? 
-The reason I've heard over the years is the direct and unbagious mapping from C
-to Assembler while providing the confort of a higher level language.
+The reason I've heard over the years is the direct and unambiguous mapping from C
+to Assembler while providing the comfort of a higher level language.
 
-I'd like to introject that C is increadibly poorly defined for a programming language.
+I'd like to introject that C is incredibly poorly defined for a programming language.
 This means if we had a programming language that would specify in completeness
 how it handles the transformation and is as honest as possible,
-that language would be more desireable than C to do single core programming.
+that language would be more desirable than C to do single core programming.
 
-Since C is poorly defined, the compiler can't do as many agressive optimizations as it could.
+Since C is poorly defined [10], the compiler can't do as many aggressive optimizations as it could.
 This is bad, since this means the programmer has to do those optimizations manually.
 This is what mainly reduces the understandability of code.
-(Given that the programmer does avoids multiple simultanious mutations on the same line.)
+(Given that the programmer does avoids multiple simultaneous mutations on the same line.)
 
 **The solution: Compiling to machine code with compile time optimizations.**
 Any interpreted language will always have overhead and not be fast enough.
@@ -410,7 +410,7 @@ So machine code is a must.
 
 ### Horizontally
 
-The ease of scaling horizontally heavily depends on the suported abstraction model.
+The ease of scaling horizontally heavily depends on the supported abstraction model.
 To prevent colored functions it is important to not differentiate between single core, 
 multi core, and multi machine execution contexts. [9]
 
@@ -419,22 +419,22 @@ since this leaves an uncomfortable amount of complexity
 for the programmer to deal with.
 This added complexity increases the surface area for the programmer to make mistakes.
 
-'Syncronisation' is the hard part when it comes to manuel parallel programming.
-Hence any solution should involve a way of streamlining syncronisation 
+'Synchronization' is the hard part when it comes to manual parallel programming.
+Hence any solution should involve a way of streamlining synchronization 
 in an performance agnostic way.
 
-Syncronisation and effective utilization over multiple computers is even harder than over multiple cores.
+Synchronization and effective utilization over multiple computers is even harder than over multiple cores.
 Giving programmers the tools to do it by hand has historically worked worse 
 than giving them a mental model and hiding complexity behind a service layer.
 
 **The solution: **
-1. **Scaling on multiple cores through automatic paralelization.**
+1. **Scaling on multiple cores through automatic parallelization.**
     The compiler should be the one that parallelizes the program. Not the programmer.
     The compiler has all the required information to parallelize and effectively schedule tasks
     to an higher degree than any human could.
     Adding 23879465 + 9128374651 inside your head is hard,
     but describing an algorithm for addition isn't.
-    The same should be utelized for more systems languages.
+    The same should be utilized for more systems languages.
     SQL serves as an example that it can be done and works. [7]
 2. **Scaling on multiple machines through OOP support.**
     But communication between processes that operate not statically,
@@ -447,19 +447,19 @@ than giving them a mental model and hiding complexity behind a service layer.
 
 Mental overhead is the thing that kills most of the fun for me.
 I want to build features, not architectures.
-And while there is certainly some fun to be had in Javas persuit of implementing
+And while there is certainly some fun to be had in Javas pursuit of implementing
 the most basic features in the most complicated way possible,
-it isn't something I want to build a multi milion line code with.
+it isn't something I want to build a multi million line code with.
 
 There are several things that increase the cognitive load on the programmer.
 Some of them I've already talked about in the sections on "Readable Operations" and "Error Handling".
 
-The goal is reducing the amount of information the programmer has to hold in his head Simultaniously.
-One thing I've not yet meantioned is strict immutability inside the language (from the POV of the programmer).
+The goal is reducing the amount of information the programmer has to hold in his head Simultaneously.
+One thing I've not yet mentioned is strict immutability inside the language (from the POV of the programmer).
 If one can see everything inside the function definition that one needs to know about the function,
 a great deal of documentation reading can be skipped and the process becomes intuitive.
 
-Building up expertiese and getting intuition and then solving problems on intuition alone 
+Building up expertise and getting intuition and then solving problems on intuition alone 
 is not only the most fun way I know to program, but also the fastest.
 
 ### Speed
@@ -478,35 +478,35 @@ Languages that embrace that philosophy more are generally more fun to work in.
 ## Dependencies
 
 In recent years we could observe the incredible achievement of our industry 
-of promissing improvements to dependency management 
-while simultaniously managing to create worse and worse solutions for the problem.
+of promising improvements to dependency management 
+while simultaneously managing to create worse and worse solutions for the problem.
 
-NPM, Maven, PIP, and many others have lead to projects overrelying on dependecies 
+NPM, Maven, PIP, and many others have lead to projects over relying on dependencies  
 that they don't understand and don't need.
 This has eroded code quality at an even faster paste than it does naturally,
-while also presuring multiple maintainers to burnout with spam requests.
+while also pressuring multiple maintainers to burnout with spam requests.
 
 **The solution: A good standard library and pull & freeze external source code.**
 
-One method of dependecy management that was more prominent in the olden days,
+One method of dependency management that was more prominent in the olden days,
 was just getting mailed the source code for the library.
 This is now even easier to do and update.
-We have git servers like github and gitlab.
+We have git servers like GitHub and GitLab.
 This is a valid approach and most of the time easier than going through an package manager.
 
 Additionally this has the benefit that you control the entire source code that is needed
 to build the application.
-This makes it a lot easier to set up for a new developer comming to the project.
+This makes it a lot easier to set up for a new developer coming to the project.
 
-Another observation that can be made is that languages with a richer standart library
+Another observation that can be made is that languages with a richer standard library
 have less need to introduce external dependencies.
 This sadly doesn't mean that the ecosystem will be healthier.
 The Python community has one of the most vast standard libraries,
-but the communicy created a jungle of package managers and dependency jenga
+but the community created a jungle of package managers and dependency Jenga
 including polyglot setups.
 To be fair, the natural habitat of a python.
 
-So the standard should be as convinent to use and as powerfull,
+So the standard should be as convenient to use and as powerful,
 that no user feels to need to download external libraries for basic applications.
 
 ## File Structure
@@ -516,28 +516,28 @@ Files should carry significant semantic information.
 Sadly there are two extremes observed in reality.
 
 1. The giant files common in the C language that try to program everything in one file.
-    This is less and less a problem with increasing tooling support and more powerfull computers,
+    This is less and less a problem with increasing tooling support and more powerful computers,
     but we can still do unity builds with `#include`s that allows us to keep the code cohesive.
 2. The other extreme is the forced fragmentation found in the Java language.
-    This only leads to semantic scattering and sparceness of ideas,
+    This only leads to semantic scattering and sparseness of ideas,
     making it significantly harder to navigate the code as a result.
 
-The other proble is the the content of the files is not sorted by any human metric.
+The other problem is the content of the files is not sorted by any human metric.
 Most of the time they are sorted by the required scoping from the compiler.
 
 If I open a file I don't want to read all your imports, then copy right notice, 
-then scope declaration and finaly after 500 lines I get the first implemented logic.
+then scope declaration and finally after 500 lines I get the first implemented logic.
 
 **The solution: Parsing the entire file and the resolving symbols.**
 Both of the problems can be (mostly) solved this way.
 By parsing the entire file and then evaluating it,
 we leave the order of declarations to the programmer.
 
-This also solves the problem of semantic speading 
+This also solves the problem of semantic spreading  
 because the implementation on the compilers side will enable the programmer
 to set semantic boundaries where they want.
 
-## Naviagation
+## Navigation
 
 Navigation is more or less a solved problem.
 The problem lies in the solutions.
@@ -545,10 +545,10 @@ Everyone has their own.
 The LSP has a different approach than IDEA, than Emacs, than ...
 
 **The solution:
-Providing parsing utilites for the language inside the standart library,
+Providing parsing utilities for the language inside the standard library,
 and implement common protocols like the *language server protocol*.**
 This way most tools should be able to hook into the LSP implementation,
-while others can leverate the prebuild parser from the language it self.
+while others can leverage the prebuild parser from the language it self.
 
 ## Conclusion
 
@@ -556,21 +556,21 @@ Non of the solutions inside here are the deadly combination of
 difficult and complex.
 They are either complex and easy or difficult and simple.
 There is no excuse for language designers to not implement them,
-or similar solutions in languages inteded for production use.
+or similar solutions in languages intended for production use.
 
 I have little hope of these solutions getting implemented 
 inside mainstream languages.
 The compilers are often badly structured or weight down by decades of churn and dept.
 
 The best hope is probably a new language.
-This is why I'm currently implementing those probosed solutions
+This is why I'm currently implementing those proposed solutions
 inside my own language *Taipan*.
 The problem is that this takes time.
 
 I hope that I could give you a hint where to focus your tooling effort in the meantime,
 and not waste time on the right wrong problems.
 Everything complex and easy is the domain of langue implementers.
-Everything simple but difficult can be solveed by tools.
+Everything simple but difficult can be solved by tools.
 
 Have fun programming.
 
@@ -600,7 +600,8 @@ Definitions from the [OED](https://www.oed.com/) and the [CED](https://dictionar
 5. ["Clean" Code, Horrible Performance - Casey Muratori - Youtube 2023](https://youtu.be/tD5NrevFtbU?si=Ja77-oQ8-dNoBmQ8)
 5. [HOW DO COMMITTEES INVENT? - Melvin Conway - 1968](https://www.melconway.com/Home/pdf/committees.pdf)
 6. ["Monad I Love You Now Get Out Of My Type System" - Gjeta Gjyshinca - Strange Loop 2022](https://youtu.be/2PxsyWqZ5dI?si=mPWo5yHrAhBFmgTj)
-7. ["I See What You Mean" - Peter Alvaro - Strange Loop 2015](https://youtu.be/R2Aa4PivG0g?si=QJr5iI21hJzS0swk)
+7. [I See What You Mean - Peter Alvaro - Strange Loop 2015](https://youtu.be/R2Aa4PivG0g?si=QJr5iI21hJzS0swk)
 8. [Clean Coders Hate What Happens to Your Code When You Use These Enterprise Programming Tricks - Kevlin Henney - NDC 2017](https://youtu.be/FyCYva9DhsI?si=VFhOUwTqQojj4S-k)
-9. ["Systems that run forever self-heal and scale" - Joe Armstrong - Strange Loop 2013](https://youtu.be/cNICGEwmXLU?si=h0brbS6vahL-tiWX)
-
+9. [Systems that run forever self-heal and scale - Joe Armstrong - Strange Loop 2013](https://youtu.be/cNICGEwmXLU?si=h0brbS6vahL-tiWX)
+10. [C Isn't A Programming Language Anymore - Aria Desires - Blog 2022](https://faultlore.com/blah/c-isnt-a-language/)
+11. [Shawn and Sean on Game Programming - Sean Barrett - Potcast 2017](https://youtu.be/lCtALewoFjc?si=KDPW3DOJKr_XQ5lA)
